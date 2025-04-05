@@ -10,7 +10,7 @@ def scrape_instagram_reel_video(url):
         page.goto(url, timeout=60000)
 
         try:
-            page.wait_for_selector("video", timeout=10000)
+            page.wait_for_selector("video", timeout=60000)
             video_element = page.query_selector("video")
             video_url = video_element.get_attribute("src")
             if video_url:

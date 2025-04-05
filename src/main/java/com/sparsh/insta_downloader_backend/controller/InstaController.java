@@ -16,7 +16,7 @@ public class InstaController {
     public ResponseEntity<String> downloadVideo(@RequestBody String urlJson) {
         // Extract just the URL string from raw body
         String url = urlJson.replaceAll("\"", "").replaceAll("url[:=]", "").trim();
-        if (!url.startsWith("http")) {
+        if (!url.startsWith("https")) {
             return ResponseEntity.badRequest().body("Invalid URL format.");
         }
 

@@ -1,5 +1,6 @@
 package com.sparsh.insta_downloader_backend.controller;
 
+import com.sparsh.insta_downloader_backend.model.UrlRequest;
 import com.sparsh.insta_downloader_backend.service.PythonBridgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,9 @@ public class InstaController {
     private PythonBridgeService pythonBridgeService;
 
     @PostMapping("/download")
-    public ResponseEntity<String> downloadVideo(@RequestBody String urlJson) {
-        // Extract just the URL string from raw body
-        String url = urlJson.replaceAll("\"", "").replaceAll("url[:=]", "").trim();
-        if (!url.startsWith("https")) {
+    public ResponseEntity<String> downloadVideo(@RequestBody UrlRequest request) {
+        String url = request.getUrl();
+        if (url == null || !url.startsWith("https://")) {
             return ResponseEntity.badRequest().body("Invalid URL format.");
         }
 

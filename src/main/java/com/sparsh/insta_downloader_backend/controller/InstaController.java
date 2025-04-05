@@ -1,28 +1,26 @@
 package com.sparsh.insta_downloader_backend.controller;
 
+import com.sparsh.insta_downloader_backend.service.PythonBridgeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.io.*;
 
 @RestController
 @RequestMapping("/reel")
 public class InstaController {
 
+    @Autowired
+    private PythonBridgeService pythonBridgeService;
+
     @PostMapping("/download")
     public ResponseEntity<String> downloadVideo(@RequestBody String urlJson) {
-        try {
-            ProcessBuilder pb = new ProcessBuilder("python3", "/scripts/scrape_instagram.py", urlJson);
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder output = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
-            return ResponseEntity.ok(output.toString());
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        // Extract just the URL string from raw body
+        String url = urlJson.replaceAll("\"", "").replaceAll("url[:=]", "").trim();
+        if (!url.startsWith("http")) {
+            return ResponseEntity.badRequest().body("Invalid URL format.");
         }
+
+        String result = pythonBridgeService.sendUrlAndGetVideo(url);
+        return ResponseEntity.ok(result);
     }
 }

@@ -33,6 +33,7 @@ def main():
                     continue
 
                 print(f"🎯 Fetching video from: {url}")
+                sys.stdout.flush()
 
                 video_url = get_video_url(page, url)
 
@@ -41,6 +42,7 @@ def main():
                     video_url = get_video_url(page, url)
 
                 print(video_url if video_url else "⚠️ Video not found")
+                sys.stdout.flush()
             except Exception as e:
                 print("❌ Error: " + str(e))
             sys.stdout.flush()

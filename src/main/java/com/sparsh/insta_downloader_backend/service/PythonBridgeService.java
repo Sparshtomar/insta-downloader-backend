@@ -14,7 +14,7 @@ public class PythonBridgeService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("python3", "scripts/persistent_scraper.py");
+        ProcessBuilder pb = new ProcessBuilder("python3", "./scripts/persistent_scraper.py");
         pb.redirectErrorStream(true);
         process = pb.start();
         writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
@@ -27,12 +27,17 @@ public class PythonBridgeService implements InitializingBean {
 
     public String sendUrlAndGetVideo(String url) {
         try {
-            String json = "{\"url\": \"" + url + "\"}";
+            // Construct JSON safely using org.json
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("url", url);
+            String json = jsonObject.toString();
+
             writer.write(json);
             writer.newLine();
             writer.flush();
 
             String response = reader.readLine();
+            System.out.println("Response from Python: " + response);
             return response;
         } catch (IOException e) {
             e.printStackTrace();
